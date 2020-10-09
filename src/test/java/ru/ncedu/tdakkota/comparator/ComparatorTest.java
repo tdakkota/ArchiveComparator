@@ -61,8 +61,7 @@ class ComparatorTest {
         assertEquals(FileDifference.Type.ADDED, m.get("add-me").getType());
         assertEquals(FileDifference.Type.DELETED, m.get("delete-me").getType());
         assertEquals(FileDifference.Type.CHANGED, m.get("modify-me").getType());
-        assertEquals(FileDifference.Type.POSSIBLY_RENAMED_R, m.get("rename-me").getType());
-        assertEquals(FileDifference.Type.POSSIBLY_RENAMED_L, m.get("i-was-renamed").getType());
+        assertEquals(FileDifference.Type.POSSIBLY_RENAMED, m.get("rename-me").getType());
     }
 
     @Test

@@ -57,10 +57,18 @@ public class ConsoleRenderer implements DifferenceRenderer {
 
             String left = fileDifference.toString();
             String right = left;
-            if (t.isLeft() && !t.isRight()) {
-                right = "";
-            } else if (t.isRight() && !t.isLeft()) {
-                left = "";
+            switch (t) {
+                case ADDED:
+                    left = "";
+                    break;
+                case DELETED:
+                    right = "";
+                    break;
+                case CHANGED:
+                    break;
+                case POSSIBLY_RENAMED:
+                    right = fileDifference.getPossibleRenamedTo().toString();
+                    break;
             }
 
             out.format(format, getCutName(left), getCutName(right));

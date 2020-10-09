@@ -4,23 +4,23 @@ import ru.ncedu.tdakkota.archive.Archive;
 import ru.ncedu.tdakkota.archive.ArchiveFile;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 public class ArchiveComparator {
     private Archive archive;
     // Optimize search by size.
-    private Set<Long> sizesSet;
+    private Map<Long, ArchiveFile> sizesMap;
 
     public ArchiveComparator(Archive a) {
         this.archive = a;
-        this.sizesSet = getSizesSet(this.archive);
+        this.sizesMap = getSizesMap(this.archive);
     }
 
-    private Set<Long> getSizesSet(Archive a) {
-        Set<Long> ss = new HashSet<>();
-        a.files().forEach((name, file) -> ss.add(file.getSize()));
+    private Map<Long, ArchiveFile> getSizesMap(Archive a) {
+        Map<Long, ArchiveFile> ss = new HashMap<>();
+        a.files().forEach((name, file) -> ss.put(file.getSize(), file));
         return ss;
     }
 
@@ -31,7 +31,7 @@ public class ArchiveComparator {
     public ArchiveDifference compare(Archive b) {
         Map<String, ArchiveFile> leftFiles = this.archive.files();
         Map<String, ArchiveFile> rightFiles = b.files();
-        Set<Long> rightSizes = getSizesSet(b);
+        Map<Long, ArchiveFile> rightSizes = getSizesMap(b);
 
         ArchiveDifference m = new ArchiveDifference(archive, b);
         HashSet<String> paths = new HashSet<>(rightFiles.keySet());
@@ -46,13 +46,16 @@ public class ArchiveComparator {
                 throw new IllegalStateException("File list was modified: one or more entries was deleted.");
             }
 
+            ArchiveFile possibleRenamedTo = null;
             FileDifference.Type t = FileDifference.Type.NO_DIFFERENCE;
-            if (!hasLeft && this.sizesSet.contains(right.getSize())) {
+            if (!hasLeft && this.sizesMap.containsKey(right.getSize())) {
                 // old archive does not contain this name, but contain file with same size.
-                t = FileDifference.Type.POSSIBLY_RENAMED_R;
-            } else if (!hasRight && rightSizes.contains(left.getSize())) {
+                t = FileDifference.Type.POSSIBLY_RENAMED;
+                possibleRenamedTo = this.sizesMap.get(right.getSize());
+            } else if (!hasRight && rightSizes.containsKey(left.getSize())) {
                 // new archive does not contain this name, but contain file with same size.
-                t = FileDifference.Type.POSSIBLY_RENAMED_L;
+                t = FileDifference.Type.POSSIBLY_RENAMED;
+                possibleRenamedTo = rightSizes.get(left.getSize());
             } else if (!hasLeft) {
                 // old archive does not contain this name and not contain files with same size.
                 t = FileDifference.Type.ADDED;
@@ -64,9 +67,9 @@ public class ArchiveComparator {
             }
 
             if (hasLeft) {
-                m.add(new FileDifference(left, t));
+                m.add(new FileDifference(left, t, possibleRenamedTo));
             } else {
-                m.add(new FileDifference(right, t));
+                m.add(new FileDifference(right, t, possibleRenamedTo));
             }
         }
         return m;

@@ -17,6 +17,9 @@ public class ArchiveDifference implements Difference {
     }
 
     public void add(FileDifference d) {
+        FileDifference renamed = d.getPossibleRenamedTo();
+        if (renamed != null && diff.containsKey(renamed.getFile().getPath()))
+            return;
         diff.put(d.getFile().getPath(), d);
     }
 

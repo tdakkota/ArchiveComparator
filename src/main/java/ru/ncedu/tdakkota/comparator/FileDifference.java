@@ -8,8 +8,7 @@ public class FileDifference implements Comparable<FileDifference> {
         ADDED,
         DELETED,
         CHANGED,
-        POSSIBLY_RENAMED_L,
-        POSSIBLY_RENAMED_R;
+        POSSIBLY_RENAMED;
 
         @Override
         public String toString() {
@@ -20,29 +19,26 @@ public class FileDifference implements Comparable<FileDifference> {
                     return "-";
                 case CHANGED:
                     return "*";
-                case POSSIBLY_RENAMED_L:
-                case POSSIBLY_RENAMED_R:
+                case POSSIBLY_RENAMED:
                     return "?";
             }
 
             return "";
         }
-
-        public boolean isLeft() {
-            return this != POSSIBLY_RENAMED_R && this != ADDED;
-        }
-
-        public boolean isRight() {
-            return this != POSSIBLY_RENAMED_L && this != DELETED;
-        }
     }
 
     private ArchiveFile file;
+    private ArchiveFile possibleRenamedTo;
     private Type type;
 
     public FileDifference(ArchiveFile file, Type type) {
+        this(file, type, null);
+    }
+
+    public FileDifference(ArchiveFile file, Type type, ArchiveFile possibleRenamedTo) {
         this.file = file;
         this.type = type;
+        this.possibleRenamedTo = possibleRenamedTo;
     }
 
     public ArchiveFile getFile() {
@@ -51,6 +47,13 @@ public class FileDifference implements Comparable<FileDifference> {
 
     public Type getType() {
         return type;
+    }
+
+    public FileDifference getPossibleRenamedTo() {
+        if (possibleRenamedTo != null) {
+            return new FileDifference(possibleRenamedTo, type, this.file);
+        }
+        return null;
     }
 
     @Override
