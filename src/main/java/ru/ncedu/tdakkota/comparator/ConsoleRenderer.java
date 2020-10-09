@@ -51,7 +51,7 @@ public class ConsoleRenderer implements DifferenceRenderer {
         String format = "| %-" + columnSize + "s | %-" + columnSize + "s |%n";
         out.format(format, getCutName(d.getLeftName()), getCutName(d.getRightName()));
         out.format("| " + "-".repeat(columnSize) + " | " + "-".repeat(columnSize) + " |\n");
-        for (String name : diff.keySet()) {
+        diff.keySet().stream().sorted().forEach(name -> {
             FileDifference fileDifference = diff.get(name);
             FileDifference.Type t = fileDifference.getType();
 
@@ -64,6 +64,6 @@ public class ConsoleRenderer implements DifferenceRenderer {
             }
 
             out.format(format, getCutName(left), getCutName(right));
-        }
+        });
     }
 }
