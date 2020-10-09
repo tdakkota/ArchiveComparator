@@ -11,6 +11,16 @@ import java.io.IOException;
 public class ArchiveComparatorApp extends JFrame {
     private final String[][] FILTERS = {{"zip", "ZIP Archive (*.zip)", "jar", "Java Archive (*.jar)"}};
 
+    public static void main(String[] args) {
+        try {
+            new ArchiveComparatorApp().run(args);
+            System.exit(0);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            System.exit(-1);
+        }
+    }
+
     private File askFile() throws IOException {
         JFileChooser c = new JFileChooser();
         c.setMultiSelectionEnabled(false);
@@ -43,15 +53,5 @@ public class ArchiveComparatorApp extends JFrame {
         }
 
         ArchiveComparator.compare(new ZipArchive(a), new ZipArchive(b));
-    }
-
-    public static void main(String[] args) {
-        try {
-            new ArchiveComparatorApp().run(args);
-            System.exit(0);
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-            System.exit(-1);
-        }
     }
 }

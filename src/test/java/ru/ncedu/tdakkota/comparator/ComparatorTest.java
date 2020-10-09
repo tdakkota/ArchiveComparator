@@ -11,29 +11,6 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ComparatorTest {
-    class MockArchive implements Archive {
-        String name;
-        Map<String, ArchiveFile> files = new HashMap<>();
-
-        public MockArchive(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public void open(InputStream s) {
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        @Override
-        public Map<String, ArchiveFile> files() {
-            return files;
-        }
-    }
-
     ArchiveDifference getTestDifference() {
         MockArchive a = new MockArchive("a");
         ArchiveFile doNotTouchMe = new ArchiveFile("do-not-touch-me", 1, new byte[]{1, 2, 3});
@@ -69,5 +46,28 @@ class ComparatorTest {
         ConsoleRenderer r = new ConsoleRenderer();
         ArchiveDifference d = getTestDifference();
         r.render(d);
+    }
+
+    class MockArchive implements Archive {
+        String name;
+        Map<String, ArchiveFile> files = new HashMap<>();
+
+        public MockArchive(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public void open(InputStream s) {
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public Map<String, ArchiveFile> files() {
+            return files;
+        }
     }
 }

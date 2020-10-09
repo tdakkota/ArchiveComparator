@@ -3,34 +3,9 @@ package ru.ncedu.tdakkota.comparator;
 import ru.ncedu.tdakkota.archive.ArchiveFile;
 
 public class FileDifference implements Comparable<FileDifference> {
-    public enum Type {
-        NO_DIFFERENCE,
-        ADDED,
-        DELETED,
-        CHANGED,
-        POSSIBLY_RENAMED;
-
-        @Override
-        public String toString() {
-            switch (this) {
-                case ADDED:
-                    return "+";
-                case DELETED:
-                    return "-";
-                case CHANGED:
-                    return "*";
-                case POSSIBLY_RENAMED:
-                    return "?";
-            }
-
-            return "";
-        }
-    }
-
     private ArchiveFile file;
     private ArchiveFile possibleRenamedTo;
     private Type type;
-
     public FileDifference(ArchiveFile file, Type type) {
         this(file, type, null);
     }
@@ -67,5 +42,29 @@ public class FileDifference implements Comparable<FileDifference> {
     @Override
     public int compareTo(FileDifference o) {
         return this.getFile().getPath().compareTo(o.getFile().getPath());
+    }
+
+    public enum Type {
+        NO_DIFFERENCE,
+        ADDED,
+        DELETED,
+        CHANGED,
+        POSSIBLY_RENAMED;
+
+        @Override
+        public String toString() {
+            switch (this) {
+                case ADDED:
+                    return "+";
+                case DELETED:
+                    return "-";
+                case CHANGED:
+                    return "*";
+                case POSSIBLY_RENAMED:
+                    return "?";
+            }
+
+            return "";
+        }
     }
 }

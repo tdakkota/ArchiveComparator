@@ -18,14 +18,14 @@ public class ArchiveComparator {
         this.sizesMap = getSizesMap(this.archive);
     }
 
+    public static ArchiveDifference compare(Archive a, Archive b) {
+        return new ArchiveComparator(a).compare(b);
+    }
+
     private Map<Long, ArchiveFile> getSizesMap(Archive a) {
         Map<Long, ArchiveFile> ss = new HashMap<>();
         a.files().forEach((name, file) -> ss.put(file.getSize(), file));
         return ss;
-    }
-
-    public static ArchiveDifference compare(Archive a, Archive b) {
-        return new ArchiveComparator(a).compare(b);
     }
 
     public ArchiveDifference compare(Archive b) {
